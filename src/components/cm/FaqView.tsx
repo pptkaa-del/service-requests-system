@@ -1,68 +1,71 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import Icon from "@/components/ui/icon";
 
-const ITEMS = [
-  {
-    q: "Как создать заявку?",
-    a: "Нажмите «Создать заявку», выберите систему, к которой относится неисправность, и кратко опишите проблему. После создания заявка появится в списке со статусом «На исполнении», а исполнитель получит уведомление.",
-  },
-  {
-    q: "Что означают статусы заявок?",
-    a: "«На исполнении» — заявка принята в работу. «Выполнена» — работы завершены, в карточке указан ответ исполнителя и дата закрытия. «Отклонена» — заявка не может быть выполнена, причина указана в ответе исполнителя.",
-  },
-  {
-    q: "Как найти нужную заявку?",
-    a: "Воспользуйтесь поиском в списке заявок: можно искать по номеру, системе или словам из описания. В разделе «Все заявки» доступен фильтр по статусу.",
-  },
-  {
-    q: "Как читать показания раздела «Устройства»?",
-    a: "Раздел показывает наличие электропитания в здании и серверной, уровень заряда АКБ и уровень сигнала. Зелёный цвет — норма, красный — питание отсутствует или АКБ разряжается.",
-  },
-];
+const CDN = "https://cdn.poehali.dev/projects/bcf243ff-f6e4-4363-b15f-348fdbed3317/bucket";
 
 const DOCS = [
-  "Регламент технического обслуживания",
-  "Инструкция пользователя СКУД",
-  "Инструкция по системе видеонаблюдения",
-  "Схема зон голосового оповещения",
+  {
+    title: "Руководство по установке «С2000-2»",
+    note: "Контроллер доступа Болид · 16 стр. · 7,1 МБ",
+    file: "Руководство по установке «С2000-2».pdf",
+    url: `${CDN}/0870849a-109f-4899-ba99-427951ec3aa2.pdf`,
+  },
+  {
+    title: "Руководство по эксплуатации «PERCo-IC05»",
+    note: "Картоприёмник · 38 стр. · 3,3 МБ",
+    file: "Руководство по эксплуатации «PERCo-IC05».pdf",
+    url: `${CDN}/836815ed-1836-4882-a4e5-0ad69195b8d3.pdf`,
+  },
+  {
+    title: "Руководство по эксплуатации «PERCo STD-01»",
+    note: "Скоростной проход и двухсторонняя секция · 50 стр. · 7,4 МБ",
+    file: "Руководство по эксплуатации «PERCo STD-01».pdf",
+    url: `${CDN}/bf908538-a8a6-47c5-a0ba-8bc32f3f9323.pdf`,
+  },
+  {
+    title: "Исполнительная документация СКУД — Автодор",
+    note: "Рабочая документация системы СКУД · 10 стр. · 0,8 МБ",
+    file: "ИД СКУД Автодор v2.pdf",
+    url: `${CDN}/ed4640b1-7543-43d2-9464-c51fdb823273.pdf`,
+  },
 ];
 
 export default function FaqView() {
   return (
     <section className="animate-in fade-in slide-in-from-bottom-2 duration-500">
       <h2 className="font-heading text-2xl font-semibold">Инструкции</h2>
-      <p className="mt-1 text-sm text-muted-foreground">Ответы на частые вопросы и документация</p>
+      <p className="mt-1 text-sm text-muted-foreground">Документация по обслуживаемому оборудованию</p>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_320px]">
-        <div className="rounded-2xl bg-card px-5 py-2 sm:px-7">
-          <Accordion type="single" collapsible defaultValue="0">
-            {ITEMS.map((it, i) => (
-              <AccordionItem key={i} value={String(i)} className="last:border-0">
-                <AccordionTrigger className="text-left font-heading text-base hover:text-primary hover:no-underline">
-                  {it.q}
-                </AccordionTrigger>
-                <AccordionContent className="text-sm leading-relaxed text-muted-foreground">{it.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-
-        <div className="rounded-2xl bg-card p-5">
-          <h3 className="font-heading text-lg font-semibold">Ссылки на документацию</h3>
-          <ul className="mt-3 space-y-1">
-            {DOCS.map((d) => (
-              <li key={d}>
-                <span className="flex items-center gap-3 rounded-xl p-2.5 text-sm">
-                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-accent text-accent-foreground">
-                    <Icon name="FileText" size={16} />
-                  </span>
-                  {d}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-xs text-muted-foreground">Документы будут доступны для скачивания после загрузки администратором.</p>
-        </div>
+      <div className="mt-5 grid gap-3 md:grid-cols-2">
+        {DOCS.map((d) => (
+          <div key={d.url} className="flex flex-col gap-4 rounded-2xl bg-card p-5 sm:flex-row sm:items-center">
+            <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-accent text-accent-foreground">
+              <Icon name="FileText" size={22} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="font-heading font-semibold leading-snug">{d.title}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{d.note}</div>
+            </div>
+            <div className="flex gap-2">
+              <a
+                href={d.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-10 flex-1 items-center justify-center gap-2 rounded-[10px] bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-accent hover:brightness-105 sm:flex-none"
+              >
+                <Icon name="Eye" size={16} />
+                Открыть
+              </a>
+              <a
+                href={d.url}
+                download={d.file}
+                aria-label={`Скачать: ${d.title}`}
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-[10px] border border-border transition-colors hover:border-primary hover:text-primary"
+              >
+                <Icon name="Download" size={16} />
+              </a>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );
