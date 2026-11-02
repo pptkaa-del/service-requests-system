@@ -13,12 +13,16 @@ import DevicesView from "./DevicesView";
 import FaqView from "./FaqView";
 import CreateRequestDialog from "./CreateRequestDialog";
 import { NAV_ITEMS, type View } from "./types";
+import func2url from "../../../backend/func2url.json";
+
+const API_URL = (func2url as Record<string, string>).requests;
 
 export default function Workspace() {
   const navigate = useNavigate();
   const [login, setLogin] = useState<string | null>(null);
   const [requests, setRequests] = useState<ServiceRequest[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [fromDb, setFromDb] = useState(false);
   const [view, setView] = useState<View>({ type: "table" });
   const [createOpen, setCreateOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -30,18 +34,32 @@ export default function Workspace() {
       return;
     }
     setLogin(s.login);
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      setRequests(raw ? (JSON.parse(raw) as ServiceRequest[]) : SEED_REQUESTS);
-    } catch {
-      setRequests(SEED_REQUESTS);
-    }
-    setLoaded(true);
+    const local = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        setRequests(raw ? (JSON.parse(raw) as ServiceRequest[]) : SEED_REQUESTS);
+      } catch {
+        setRequests(SEED_REQUESTS);
+      }
+      setLoaded(true);
+    };
+    fetch(API_URL)
+      .then((r) => r.json())
+      .then((d: { configured?: boolean; requests?: ServiceRequest[] }) => {
+        if (d.configured && d.requests) {
+          setFromDb(true);
+          setRequests(d.requests);
+        } else local();
+      })
+      .catch(() => {
+        toast.error("Не удалось загрузить заявки из базы");
+        local();
+      });
   }, [navigate]);
 
   useEffect(() => {
-    if (loaded) localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
-  }, [requests, loaded]);
+    if (loaded && !fromDb) localStorage.setItem(STORAGE_KEY, JSON.stringify(requests));
+  }, [requests, loaded, fromDb]);
 
   const go = (v: View) => {
     setView(v);
@@ -55,7 +73,26 @@ export default function Workspace() {
     navigate({ to: "/" });
   };
 
-  const create = (system: string, description: string) => {
+  const create = async (system: string, description: string) => {
+    if (fromDb) {
+      try {
+        const r = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ system, description }),
+        });
+        const d = (await r.json()) as { request?: ServiceRequest; error?: string };
+        if (!r.ok || !d.request) throw new Error(d.error);
+        const created = d.request;
+        setRequests((prev) => [created, ...prev]);
+        setCreateOpen(false);
+        go({ type: "request", num: created.num });
+        toast.success(`Заявка № ${created.num} создана`, { description: system });
+      } catch {
+        toast.error("Не удалось создать заявку");
+      }
+      return;
+    }
     const num = (requests.reduce((m, r) => Math.max(m, r.num), 0) || 0) + 1;
     const req: ServiceRequest = {
       num,
