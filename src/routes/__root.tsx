@@ -7,10 +7,10 @@ import {PLATFORM_META, PLATFORM_SCRIPTS} from "@/platform/scripts.gen";
 import {HMR_CLIENT} from "@/platform/dev-hmr";
 import appCss from "@/index.css?url";
 
-const TITLE = "Поехали";
+const TITLE = "Телеком Инжиниринг — система учета заявок обслуживания";
 const DESCRIPTION =
-    "Опишите идею — нейросеть сделает приложение или сайт за 5 минут. Запустите сами или доверьте фрилансеру.";
-const OG_IMAGE = "https://cdn.poehali.dev/intertnal/img/phl2/og-main-2.webp";
+    "Создавайте заявки на обслуживание СКУД, видеонаблюдения и оповещения и отслеживайте их статус с любого устройства.";
+const OG_IMAGE = "https://cdn.poehali.dev/projects/bcf243ff-f6e4-4363-b15f-348fdbed3317/files/5d02a17b-08e2-449f-a886-3fdfd53cb03f.jpg";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -22,12 +22,18 @@ export const Route = createRootRoute({
             {property: "og:title", content: TITLE},
             {property: "og:description", content: DESCRIPTION},
             {property: "og:image", content: OG_IMAGE},
-            {property: "og:image:width", content: "1200"},
-            {property: "og:image:height", content: "630"},
+            {property: "og:image:width", content: "1360"},
+            {property: "og:image:height", content: "768"},
             {name: "twitter:image", content: OG_IMAGE},
             ...PLATFORM_META,
         ],
         links: [
+            {rel: "preconnect", href: "https://fonts.googleapis.com"},
+            {rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous"},
+            {
+                rel: "stylesheet",
+                href: "https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap",
+            },
             {rel: "stylesheet", href: appCss},
             {rel: "icon", type: "image/svg+xml", href: "/favicon.svg"},
         ],
