@@ -35,13 +35,13 @@ def connect():
 
 def iso(v):
     if isinstance(v, datetime):
-        return v.isoformat()
+        return v.isoformat() + 'Z'
     return None
 
 
 def norm_status(s: str) -> str:
     t = (s or '').lower()
-    if 'выполн' in t:
+    if 'закры' in t or 'выполнена' in t:
         return 'Выполнена'
     if 'отклон' in t:
         return 'Отклонена'
